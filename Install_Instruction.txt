@@ -1,0 +1,72 @@
+## INIT PART ##
+
+$ conda create -n env python=3.9.12
+$ conda activate env
+
+Be sure to be on the right Branch
+At the time it is Mattias
+$ git checkout Mattias
+$ cd stage_mattias_kockum
+
+$ pip install torch==1.8.1+cpu torchvision==0.9.1+cpu torchaudio==0.8.1 -f https://download.pytorch.org/whl/torch_stable.html
+(Be sure to be in the right Project directory)
+$ pip install -r python_requirements.txt
+
+
+## DENOISING PART ##
+
+/i\ some data are already downloaded from the git /i\
+/i\ if you just want to test the project you can skip to downloading model /i\
+/i\ otherwise don't forget to remove those data if you like /i\
+
+# Downloading data #
+
+IMPORTANT : put at least a clean wav file in it
+Exemple :
+	$ wget https://ia802608.us.archive.org/23/items/0_sense_and_sensibility_librivox/senseandsensibility_10_austen_64kb.mp3 -P dataset/clean/book1
+	$ mpg321 -w dataset/clean/clean1.wav dataset/clean/book1/senseandsensibility_10_austen_64kb.mp3
+	$ rm -rf dataset/clean/book1/
+
+$ mkdir dataset/noise
+IMPORTANT : put at least a noise wav in it
+Exemple :
+	$ wget https://assets.mixkit.co/sfx/download/mixkit-children-audience-talking-loop-359.wav -P dataset/noise
+
+IMPORTANT : whatever the wav files you use, be sure to have them at the same
+	sampling rate
+Exemple :
+	$ ffmpeg -i dataset/noise/mixkit-children-audience-talking-loop-359.wav -ac 1 dataset/noise/noise1.wav
+	$ rm dataset/noise/mixkit-children-audience-talking-loop-359.wav
+	$ sox dataset/noise/out.wav -t wav -r 22050 -b 16 -e signed out.wav
+	$ mv out.wav dataset/noise/out.wav
+	$ sox dataset/clean/clean1.wav -t wav -r 22050 -b 16 -e signed out.wav
+	$ mv out.wav dataset/clean/clean1.wav
+
+# Downloading Model #
+
+$ mkdir DenoisingLib/pretrained_models
+$ wget https://github.com/breizhn/DTLN/raw/master/pretrained_model/DTLN_norm_500h.h5 -P DenoisingLib/pretrained_models/
+
+$ python DenoisingBloc.py
+
+## STT PART ##
+
+IMPORTANT : beware of the text in dataset/text
+
+# Wav2Vec2 initialisation #
+
+$ mkdir SpeechToTextLib/pretrained_models
+$ wget https://github.com/daanzu/wav2vec2_stt_python/releases/download/models/facebook_wav2vec2-base-960h.zip -P SpeechToTextLib/pretrained_models/
+$ unzip SpeechToTextLib/pretrained_models/facebook_wav2vec2-base-960h.zip -d SpeechToTextLib/pretrained_models
+
+# ESPNET initialisation #
+
+$ python
+>>> import nltk
+>>> nltk.download('averaged_perceptron_tagger', '/vrac/mkockum/miniconda3/envs/env/share/nltk_data')  # put here your nltk location, can be found by $ python 'SpeechToTextLib/EspNetEstimator.py' './dataset/clean/clean1.wav' 'Shinji Watanabe/librispeech_asr_train_asr_transformer_e18_raw_bpe_sp_valid.acc.best'
+>>> quit()
+
+
+$ python SpeechToTextBloc.py
+
+NOTA BENE : when modifiying the dataset do not forget to remove the dataframe produced (or do renaming)
