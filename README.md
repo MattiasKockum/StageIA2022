@@ -1,5 +1,12 @@
-Exemple of a working directory tree structure
+The project consists in the making of a benchmarking tool to measure and compare the efficiency of multiple denoisers.
 
+![Alt text](https://raw.githubusercontent.com/MattiasKockum/StageIA2022/26bd30fb97b37fea3ec87fb46daaf4251a3c266c/ClassDiagram.svg)
+<img src="https://raw.githubusercontent.com/MattiasKockum/StageIA2022/26bd30fb97b37fea3ec87fb46daaf4251a3c266c/ClassDiagram.svg">
+
+
+Example of a working directory tree structure
+
+```bash
 .
 ├── configs
 │   └── fontlist-v330.json
@@ -153,5 +160,4 @@ Exemple of a working directory tree structure
     │   └── facebook_wav2vec2-base-960h.zip
     ├── SpeechToTextModels.py
     └── Wav2Vec2SttEstimator.py
-
-29 directories, 123 files
+```bash
